@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" PrivateAssets="all" />
+    <Compile Include="../../src/PlayerTradingReforged/TradeInstance.cs" Link="TradeInstance.cs" />
+    <Compile Include="../../src/PlayerTradingReforged/Trading/TradeRecovery.cs" Link="TradeRecovery.cs" />
+    <Compile Include="../../src/PlayerTradingReforged/Trading/TradeCapacity.cs" Link="TradeCapacity.cs" />
+    <Compile Include="../../src/PlayerTradingReforged/Trading/TradeSession.cs" Link="TradeSession.cs" />
+  </ItemGroup>
+</Project>

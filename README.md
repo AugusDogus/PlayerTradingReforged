@@ -1,64 +1,45 @@
-# Valheim - Player Trading
+# Player Trading Reforged
 
-# About
+![Player Trading Reforged](package/banner.png)
 
-Tired of throwing your items to other players? This mod implements real trading between players. In order to start a new trade instance, you must first **interact** with the target player to send them a **trade request**. If the other player **accepts your trade request** (by also interacting with you), the instance will start.
+Trade directly with other players through familiar inventory windows. An independent rewrite of [projjm's Player Trading](https://github.com/projjm/Valheim-Player-Trading) for Valheim **1.0.12**.
 
-During the trade instance, two windows will be visible, the first window will hold the **items you wish to offer**, the second will be a preview of the **items you will receive**. Once a player is happy with the trade they can choose to **Accept**, **both players** must have accepted before the trade can be finalized. Any changes to the trade will automatically reset both player's Accept state in order to prevent malicious behaviour.
+Interact with a nearby player to request a trade. They interact with you to accept. Place items in **You Will Give**, review **You Will Receive**, and press **Accept Trade**. Both players must accept the same offers. **Change Trade** withdraws acceptance; editing an offer resets both players' acceptance; **Cancel Trade** returns your items.
 
-# Features
+- The original two-panel layout, green acceptance indicators, stack splitting, quick move, and controller buttons remain.
+- Press **F11** to reposition windows and buttons. Positions and the optional trade modifier key remain configurable.
+- Both trading players need this version. Other players and the server do not need the mod.
+- Custom items require matching item mods on both clients. Unknown or malformed offers cancel instead of silently dropping items.
 
-* Quick and easy trading between players.
-* Client-side only! No server installations needed.
-* Works with custom items!
-* Configure the mod UI by pressing F11 (key is configurable)
-* Use it anywhere! As long as the player you're trading also has the mod installed.
-* Full and continued gamepad support.
-* Familiar keybinds will continue to work! (Splitting stacks, Quick-Select etc).
+## Installation
 
-# Installation
+Install **BepInExPack_Valheim 5.4.2350** in your mod profile, then import the local package ZIP through r2modman, or place `PlayerTradingReforged.dll` in `BepInEx/plugins/PlayerTradingReforged/`.
 
-You must have **BepinEx** installed before attempting to install this mod.
-Move the **.dll file** into your **Valheim\BepInEx\plugins** folder.
+This is an independent mod with fresh settings. It does not read or migrate the original Player Trading configuration or translations. Settings use `augusdogus.mods.PlayerTradingReforged.cfg`; translations use `augusdogus.mods.PlayerTradingReforged.strings.json`. Both traders need Player Trading Reforged. Jötunn is not required.
 
-In order to configure the trade UI window placement, press **F11** (default key) and drag the windows/buttons to their desired location.
-While in placement mode, elements that can be moved will be highlighted purple.
+## Interrupted trades
 
-If you want to translate this mod into another language, I've provided an additional config file for string localization named PlayerTradingStrings.txt. This file is provided in a JSON format and each entry is defined as **"Key" : "Value"**. To configure this file simply change the **Value** of each entry. Be careful not to change the **Key** string otherwise the mod may break.
+Cancellation returns the offered items. If your inventory filled up meanwhile, remaining items stay in the character's trade recovery data and return when space becomes available. New trades are blocked until recovery finishes.
 
-# Feedback
+If the connection fails during final confirmation, the trade waits for the other player's decision instead of refunding items that may already have been exchanged. Reconnect both characters in the same world and bring them near one another to resolve it. Keep this mod and the relevant item mods installed until recovery completes.
 
-I appreciate any feedback that you might have. If you encounter a bug please report it whenever you can so that I can fix it in the following update.
-If you discover a mod incompatibility then I will attempt to make it compatible. Thanks!
+Recovery data is included in normal character saves. This is a client-side exchange, not a server-authoritative transaction: process crashes, restoring an older save, or modified clients can still break consistency between character saves. It is not an anti-cheat system or a guarantee against hard-crash item loss/duplication.
 
-## Video Preview:
+## Build and verification
 
-[![Valheim - Player Trading Mod](https://i.imgur.com/vUdpT3j.png)](https://www.youtube.com/watch?v=jc0tMuEjXbM)
+```sh
+bun install --frozen-lockfile
+dotnet build src/PlayerTradingReforged/PlayerTradingReforged.csproj -c Release -t:Package \
+  -p:GameDir="/path/to/Valheim" \
+  -p:BepInExDir="/path/to/profile/BepInEx"
+```
 
-## Screenshots:
+Requires .NET SDK 8 and Bun 1.4.1+. Output: `artifacts/PlayerTradingReforged-1.0.0.zip`. Building never installs or publishes the mod.
 
-![alt text](https://i.imgur.com/JLERNyJ.png "Screenshot 1")
+The current build is checked against the installed 1.0.12 assemblies, with automated protocol, capacity, packaging, and Harmony compatibility checks. **Two-client gameplay and visual/controller checks are still required** before calling this release tested in-game. See the [test checklist](docs/TESTING.md) and [development instructions](docs/DEVELOPMENT.md).
 
-![alt text](https://i.imgur.com/6jnxlXj.png "Screenshot 2")
+## Credits
 
-![alt text](https://i.imgur.com/HoDWZlH.png "Screenshot 3")
+Original Player Trading code and interface by **projjm**. Player Trading Reforged has its own icon and banner. Repository structure and release tooling follow [ValheimModTemplate](https://github.com/AugusDogus/ValheimModTemplate).
 
-![alt text](https://i.imgur.com/2rqd5SN.png "Screenshot 4")
-
-# Changelog
-        Version 1.2.1
-            Hotfix for missing directory exception on initialisation.
-        Version 1.2.0
-            Added string localization file into the config folder (must be configured manually).
-            Fixed trade requests being sent while typing in the chat.
-            Attempt to fix bug where trade requests are sent to nearby players.
-        Version 1.1.1
-            Added config option to use modifier key when sending/receiving trade requests
-        Version 1.1.0
-            Added Window Edit Mode - toggled on/off using F11 (configurable).
-            Fixed bug where inventory grid misaligns when using custom Valheim Plus inventory config.
-            Disable E (interact) closing the current trade instance.
-        Version 1.0.1
-            Added Gamepad support.
-        Version 1.0.0
-            Player Trading initial release.
+[Original video preview](https://www.youtube.com/watch?v=jc0tMuEjXbM)
