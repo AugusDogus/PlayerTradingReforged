@@ -1,6 +1,6 @@
-# Player Trading Reforged
-
-![Player Trading Reforged](package/banner.png)
+<p align="center">
+  <img src="package/banner.png" alt="Player Trading Reforged: player trading for Valheim" width="900">
+</p>
 
 Trade directly with other players through familiar inventory windows. An independent rewrite of [projjm's Player Trading](https://github.com/projjm/Valheim-Player-Trading) for Valheim **1.0.12**.
 
