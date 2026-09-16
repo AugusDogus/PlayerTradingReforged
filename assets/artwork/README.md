@@ -9,7 +9,9 @@ Exports are resized with ImageMagick. The artwork was created with the built-in 
 
 ## Icon prompt
 
-Use case: logo-brand. Create an original square app icon for the Valheim mod Player Trading Reforged, intended for a 256x256 Thunderstore thumbnail. A bold central emblem of two clasped hands wearing simple Viking leather bracers, framed by two broad circular exchange arrows made of warm forged bronze. Dark pine-green background, cream highlights and bronze, restrained Norse fantasy styling with clean illustrated shapes, crisp dark outlines and subtle metal texture. Strong silhouette, generous safe margin, simple enough to read at small size. No text, no letters, no watermark, no existing game logos. Square 1024x1024 artwork.
+Use case: precise-object-edit. Adapt the provided approved Player Trading Reforged Flat banner into a square Thunderstore icon. Use ONLY its existing left-hand emblem: the same flat cream handshake with the same two muted ochre circular exchange arrows. Preserve the emblem design, hand shapes, arrow directions, proportions, flat fills and exact palette. Center and enlarge this existing emblem to fill about 80 percent of a square canvas with balanced margins. Use the same solid dark pine-green background as the banner, fully opaque all the way to the four corners. Remove all title lettering by excluding the title area. This is an asset adaptation of the approved design, not a new illustration. No text, letters, leather, ornaments, textures, metallic shine, bevels, shadows, gradients or new shapes. A crisp square 1024x1024 PNG icon that remains legible at 256x256.
+
+The icon uses the selected Flat banner as its reference.
 
 ## Banner prompt
 
