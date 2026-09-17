@@ -1,4 +1,10 @@
-# 1.0.0 (unreleased)
+# 1.1.0 (unreleased)
+
+- Show a read-only view of the trading partner's main inventory, including equipped items, in the crafting area.
+- Refresh inventory previews while a trade is open without changing offers or acceptance. Clear the preview when the trade closes.
+- Allow repositioning the inventory preview with F11. Both players need 1.1.0 or newer for previews.
+
+# 1.0.0
 
 - Introduce Player Trading Reforged as an independent mod with its own plugin ID and fresh configuration.
 

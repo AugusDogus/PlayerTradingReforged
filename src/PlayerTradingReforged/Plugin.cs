@@ -26,6 +26,9 @@ namespace PlayerTradingReforged
         public string NotEnoughInventorySlots = "Not enough inventory slots";
         public string ToGiveWindowText = "You Will Give";
         public string ToReceiveWindowText = "You Will Receive";
+        public string PartnerInventoryText = "Partner's Inventory (Read Only)";
+        public string PartnerInventoryWaiting = "Waiting for Partner's Inventory";
+        public string PartnerInventoryUnavailable = "Partner's Inventory Unavailable";
         public string AcceptTradeButtonText = "Accept Trade";
         public string ChangeTradeButtonText = "Change Trade";
         public string CancelTradeButtonText = "Cancel Trade";
@@ -37,7 +40,7 @@ namespace PlayerTradingReforged
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string PluginId = "augusdogus.mods.PlayerTradingReforged";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.1.0";
         private static Plugin? _instance;
         private readonly Harmony _harmony = new Harmony(PluginId);
         private TradeHandler? _handler;
@@ -50,6 +53,7 @@ namespace PlayerTradingReforged
         public static ConfigEntry<KeyCode> EditWindowLayoutKey => Settings.Bind("Keybinds", "editWindowLayoutKey", KeyCode.F11, "Toggle window placement mode.");
         public static ConfigEntry<Vector2> ToGiveUserOffset => Offset("toGiveUserOffset");
         public static ConfigEntry<Vector2> ToReceiveUserOffset => Offset("toReceiveUserOffset");
+        public static ConfigEntry<Vector2> PartnerInventoryUserOffset => Offset("partnerInventoryUserOffset");
         public static ConfigEntry<Vector2> AcceptButtonUserOffset => Offset("acceptButtonUserOffset");
         public static ConfigEntry<Vector2> CancelButtonUserOffset => Offset("cancelButtonUserOffset");
         private static ConfigEntry<Vector2> Offset(string key) => Settings.Bind("Offsets", key, Vector2.zero, "Trade UI position offset. Set to 0, 0 to reset.");
@@ -61,6 +65,7 @@ namespace PlayerTradingReforged
             _instance = this;
             _ = UseModifierKey; _ = ModifierKey; _ = EditWindowLayoutKey;
             _ = ToGiveUserOffset; _ = ToReceiveUserOffset; _ = AcceptButtonUserOffset; _ = CancelButtonUserOffset;
+            _ = PartnerInventoryUserOffset;
             InitLocalization();
             _harmony.PatchAll(typeof(Plugin).Assembly);
         }

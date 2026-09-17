@@ -19,7 +19,8 @@ internal abstract class TradeWindow : MonoBehaviour
     protected bool IsLeft { get; private set; }
     protected RectTransform Panel => _panel ?? throw new InvalidOperationException("Trade window has not initialized.");
     protected InventoryGrid Grid => _grid ?? throw new InvalidOperationException("Trade grid has not initialized.");
-    public Inventory Inventory { get; private set; } = TradeInventory.Create();
+    public Inventory Inventory { get; protected set; } = TradeInventory.Create();
+    protected Vector2 UserOffset => _offset?.Value ?? Vector2.zero;
     public UIGroupHandler Group => Panel.GetComponent<UIGroupHandler>();
 
     protected void Initialize(RectTransform panel, string title, bool left, ConfigEntry<Vector2> offset)
@@ -48,7 +49,7 @@ internal abstract class TradeWindow : MonoBehaviour
         UpdatePosition();
     }
 
-    protected void UpdatePosition()
+    protected virtual void UpdatePosition()
     {
         if (_panel == null || _offset == null) return;
         float scale = PlayerPrefs.GetFloat("GuiScale", 1f);

@@ -1,5 +1,6 @@
 using System;
 using PlayerTradingReforged.Patterns;
+using PlayerTradingReforged.Trading;
 using UnityEngine;
 
 namespace PlayerTradingReforged.GUI;
@@ -8,10 +9,11 @@ internal sealed class TradeWindowManager : MonoSingleton<TradeWindowManager>
 {
     private sealed class Windows
     {
-        public Windows(ContainerTradeWindow give, PreviewTradeWindow receive, TradeButton accept, TradeButton cancel)
-        { Give = give; Receive = receive; Accept = accept; Cancel = cancel; }
+        public Windows(ContainerTradeWindow give, PreviewTradeWindow receive, PreviewTradeWindow partner, TradeButton accept, TradeButton cancel)
+        { Give = give; Receive = receive; Partner = partner; Accept = accept; Cancel = cancel; }
         public ContainerTradeWindow Give { get; }
         public PreviewTradeWindow Receive { get; }
+        public PreviewTradeWindow Partner { get; }
         public TradeButton Accept { get; }
         public TradeButton Cancel { get; }
     }
@@ -26,13 +28,17 @@ internal sealed class TradeWindowManager : MonoSingleton<TradeWindowManager>
 
     protected override void Init()
     {
-        var receive = gameObject.AddComponent<PreviewTradeWindow>(); receive.Initialize();
+        var receive = gameObject.AddComponent<PreviewTradeWindow>();
+        receive.Initialize("PlayerTradingReforgedReceive", Plugin.Localization.ToReceiveWindowText, Plugin.ToReceiveUserOffset);
+        var partner = gameObject.AddComponent<PreviewTradeWindow>();
+        partner.Initialize("PlayerTradingReforgedPartner", Plugin.Localization.PartnerInventoryText,
+            Plugin.PartnerInventoryUserOffset, InventoryGui.instance.m_crafting);
         var give = gameObject.AddComponent<ContainerTradeWindow>(); give.Initialize();
         var accept = gameObject.AddComponent<TradeButton>();
         accept.Initialize(Plugin.Localization.AcceptTradeButtonText, AcceptClicked, Plugin.AcceptButtonUserOffset, give.Group, "JoyButtonX", "X", 1f);
         var cancel = gameObject.AddComponent<TradeButton>();
         cancel.Initialize(Plugin.Localization.CancelTradeButtonText, CancelClicked, Plugin.CancelButtonUserOffset, give.Group, "JoyButtonB", "B", -1f);
-        _windows = new Windows(give, receive, accept, cancel);
+        _windows = new Windows(give, receive, partner, accept, cancel);
     }
     private void AcceptClicked() => OnTradeAcceptPressed?.Invoke();
     private void CancelClicked() => OnCancelTradePressed?.Invoke();
@@ -40,6 +46,8 @@ internal sealed class TradeWindowManager : MonoSingleton<TradeWindowManager>
     public Inventory GetToTradeInventory() => UI.Give.Inventory;
     public Inventory GetToReceiveInventory() => UI.Receive.Inventory;
     public void RefreshToReceiveWindow() => UI.Receive.Refresh();
+    public void ShowPartnerInventory(Inventory? inventory) => UI.Partner.Display(inventory ?? TradeInventory.Create(),
+        inventory != null ? Plugin.Localization.PartnerInventoryText : Plugin.Localization.PartnerInventoryUnavailable);
     public bool IsInWindowPositionMode() => _mode == Mode.Editing || _mode == Mode.TradingEditing;
     public void SetToTradeAccepted(bool accepted)
     {
@@ -56,6 +64,8 @@ internal sealed class TradeWindowManager : MonoSingleton<TradeWindowManager>
         InventoryGui.instance.m_animator.speed = 9999f;
         UI.Receive.Reset(); UI.Give.Reset();
         UI.Receive.Show(); UI.Give.Show();
+        UI.Partner.Display(TradeInventory.Create(), Plugin.Localization.PartnerInventoryWaiting);
+        UI.Partner.Show();
         SetToTradeAccepted(false); SetToReceiveAccepted(false);
         UI.Accept.SetActive(true); UI.Cancel.SetActive(true);
         HUDTools.SetHUDsActive(false);
@@ -78,7 +88,7 @@ internal sealed class TradeWindowManager : MonoSingleton<TradeWindowManager>
     }
     private void SetEditMode(bool editing)
     {
-        UI.Give.SetEditMode(editing); UI.Receive.SetEditMode(editing);
+        UI.Give.SetEditMode(editing); UI.Receive.SetEditMode(editing); UI.Partner.SetEditMode(editing);
         UI.Accept.SetEditMode(editing); UI.Cancel.SetEditMode(editing);
     }
     public void CancelInstance()
@@ -88,6 +98,7 @@ internal sealed class TradeWindowManager : MonoSingleton<TradeWindowManager>
         SetEditMode(false);
         UI.Accept.SetActive(false); UI.Cancel.SetActive(false);
         UI.Receive.Hide(); UI.Receive.Inventory.RemoveAll(); UI.Give.Hide();
+        UI.Partner.Hide(); UI.Partner.Inventory.RemoveAll();
         SetToTradeAccepted(false); SetToReceiveAccepted(false);
         HUDTools.SetHUDsActive(true);
         if (InventoryGui.instance) InventoryGui.instance.m_animator.speed = _animationSpeed;

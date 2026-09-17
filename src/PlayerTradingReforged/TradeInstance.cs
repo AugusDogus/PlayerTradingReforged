@@ -15,6 +15,8 @@ internal sealed class TradeInstance
     private float _prepareStarted;
     private float _lastHeartbeat;
     private float _nextHeartbeat;
+    private float _nextInventoryPreview;
+    private string? _lastInventoryPreview;
     public TradeSession Session { get; }
     public Inventory Give { get; }
     private Inventory ReceiveItems { get; }
@@ -84,6 +86,9 @@ internal sealed class TradeInstance
         switch (kind)
         {
             case "heartbeat": break;
+            case "inventory":
+                _windows.ShowPartnerInventory(TradeInventory.TryLoadPreview(items, out var preview) ? preview : null);
+                break;
             case "offer":
                 if (Session.State == TradeSession.Phase.Preparing) { Cancel(); return; }
                 if (theirs <= Session.RemoteRevision || Session.State != TradeSession.Phase.Editing) return;
@@ -145,6 +150,17 @@ internal sealed class TradeInstance
         { Cancel(); return; }
         if (Time.unscaledTime >= _nextHeartbeat)
         { _nextHeartbeat = Time.unscaledTime + 2f; _handler.Send(Session, "heartbeat"); }
+        if (Time.unscaledTime >= _nextInventoryPreview)
+        {
+            _nextInventoryPreview = Time.unscaledTime + 0.5f;
+            // Poll while trading to include durability/equipment changes that do not raise Inventory.Changed.
+            string preview = TradeInventory.SavePreview(_local.GetInventory());
+            if (preview != _lastInventoryPreview)
+            {
+                _handler.Send(Session, "inventory", preview);
+                _lastInventoryPreview = preview;
+            }
+        }
         if ((Session.State == TradeSession.Phase.Preparing || Session.State == TradeSession.Phase.Prepared) && Time.unscaledTime - _prepareStarted > 10f)
             Cancel();
     }

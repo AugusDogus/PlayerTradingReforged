@@ -16,6 +16,7 @@ public sealed class TradeRecoveryTests
         public Peer(Player local, Player remote, string id, bool coordinator)
         {
             Player = local;
+            Handler.OnClose = UI.CancelInstance;
             TradeWindowManager.Instance = UI;
             Trade = new TradeInstance(Handler, local, remote, new TradeSession(id, remote.Id, coordinator));
             Trade.Open();
@@ -45,6 +46,65 @@ public sealed class TradeRecoveryTests
         SendOne(a, b); // A accepts.
         SendOne(b, a); // B accepts, A prepares.
         SendOne(a, b); // B prepares and sends ready.
+    }
+
+    [Fact]
+    public void TradeSharesInventoryOnFirstTickAndOnlyResendsChanges()
+    {
+        var (a, _) = Pair();
+        a.Player.Inventory.Add("wood");
+        a.Trade.Tick();
+        var snapshot = Assert.Single(a.Handler.Messages, message => message.Kind == "inventory");
+        Assert.Equal("[\"wood\"]", snapshot.Items);
+        a.Handler.Messages.Clear();
+        Time.unscaledTime = 0.5f; a.Trade.Tick();
+        Assert.DoesNotContain(a.Handler.Messages, message => message.Kind == "inventory");
+        a.Player.Inventory.Add("stone");
+        Time.unscaledTime = 1f; a.Trade.Tick();
+        snapshot = Assert.Single(a.Handler.Messages, message => message.Kind == "inventory");
+        Assert.Equal("[\"wood\",\"stone\"]", snapshot.Items);
+    }
+
+    [Fact]
+    public void PreviewDoesNotChangeOffersAcceptancesOrOwnedItems()
+    {
+        var (a, b) = Pair(); OfferBoth(a, b);
+        a.UI.Accept();
+        a.Trade.Receive("inventory", 0, 0, "[\"sword\",\"helmet\"]");
+        Assert.Equal(new[] { "sword", "helmet" }, Assert.IsType<Inventory>(a.UI.PartnerInventory).Items);
+        Assert.Equal(new[] { "wood" }, a.UI.Give.Items);
+        Assert.Equal(new[] { "stone" }, a.UI.Receive.Items);
+        Assert.Empty(a.Player.Inventory.Items);
+        Assert.True(a.Trade.Session.LocalAccepted);
+        Assert.Equal(1, a.Trade.Session.LocalRevision);
+        Assert.Equal(1, a.Trade.Session.RemoteRevision);
+        Assert.Equal("[\"stone\"]", Assert.IsType<TradeRecovery.Entry>(TradeRecovery.Read(a.Player)).Receive);
+    }
+
+    [Fact]
+    public void UnreadablePreviewClearsStaleViewWithoutCancellingTrade()
+    {
+        var (a, _) = Pair();
+        a.Trade.Receive("inventory", 0, 0, "[\"wood\"]");
+        Assert.Equal(new[] { "wood" }, Assert.IsType<Inventory>(a.UI.PartnerInventory).Items);
+        a.Trade.Receive("inventory", 0, 0, "invalid snapshot");
+        Assert.Null(a.UI.PartnerInventory);
+        Assert.Equal(TradeSession.Phase.Editing, a.Trade.Session.State);
+        Assert.Equal(0, a.Handler.Closed);
+    }
+
+    [Fact]
+    public void InventorySharingStopsWhenTradeCloses()
+    {
+        var (a, _) = Pair();
+        a.Trade.Receive("inventory", 0, 0, "[\"stone\"]");
+        Assert.NotNull(a.UI.PartnerInventory);
+        a.Trade.Cancel(); a.Handler.Messages.Clear();
+        a.Player.Inventory.Add("wood");
+        Time.unscaledTime = 1f; a.Trade.Tick();
+        a.Trade.Receive("inventory", 0, 0, "[\"stone\"]");
+        Assert.Empty(a.Handler.Messages);
+        Assert.Null(a.UI.PartnerInventory);
     }
 
     [Fact]

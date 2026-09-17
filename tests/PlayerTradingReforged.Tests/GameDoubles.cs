@@ -76,8 +76,9 @@ namespace PlayerTradingReforged
     {
         public readonly Queue<(string Kind, int Local, int Remote, string Items)> Messages = new();
         public int Closed;
+        public Action? OnClose;
         public void Send(TradeSession session, string kind, string items = "") => Messages.Enqueue((kind, session.LocalRevision, session.RemoteRevision, items));
-        public void Close(TradeInstance instance) { Closed++; GUI.TradeWindowManager.Instance.CancelInstance(); }
+        public void Close(TradeInstance instance) { Closed++; OnClose?.Invoke(); }
         public float GetMaxDistance() => 5;
         public static void Show(string message) { }
     }
@@ -89,6 +90,7 @@ namespace PlayerTradingReforged.GUI
     {
         public static TradeWindowManager Instance { get; set; } = new();
         public Inventory Give = new(), Receive = new();
+        public Inventory? PartnerInventory;
         public event Action? OnTradeAcceptPressed;
         public event Action? OnCancelTradePressed;
         public event Action? OnChangeTradePressed;
@@ -98,10 +100,11 @@ namespace PlayerTradingReforged.GUI
         public Inventory GetToTradeInventory() => Give;
         public Inventory GetToReceiveInventory() => Receive;
         public void StartNewInstance() { }
-        public void CancelInstance() { }
+        public void CancelInstance() => PartnerInventory = null;
         public void SetToTradeAccepted(bool value) { }
         public void SetToReceiveAccepted(bool value) { }
         public void RefreshToReceiveWindow() { }
+        public void ShowPartnerInventory(Inventory? inventory) => PartnerInventory = inventory;
     }
 }
 
@@ -111,6 +114,8 @@ namespace PlayerTradingReforged.Trading
     {
         public static Inventory Create() => new();
         public static string Save(Inventory inventory) => JsonSerializer.Serialize(inventory.Items);
+        public static string SavePreview(Inventory inventory) => Save(inventory);
+        public static bool TryLoadPreview(string value, out Inventory inventory) => TryLoad(value, out inventory);
         public static bool TryLoad(string value, out Inventory inventory)
         {
             inventory = new Inventory();
