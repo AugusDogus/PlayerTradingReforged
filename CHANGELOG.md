@@ -1,4 +1,12 @@
-# 1.1.0 (unreleased)
+# 1.1.1 (unreleased)
+
+- Align personal and partner inventories above the two offer windows, with trade buttons below.
+- Restore the personal inventory position when trading closes.
+- Fix empty preview tooltips when hovering items without an inventory update.
+- Show both players' projected inventory weights after the trade, keeping offered-item weights visible.
+- Remove “Read Only” from the partner inventory title.
+
+# 1.1.0
 
 - Show a read-only view of the trading partner's main inventory, including equipped items, in the crafting area.
 - Refresh inventory previews while a trade is open without changing offers or acceptance. Clear the preview when the trade closes.

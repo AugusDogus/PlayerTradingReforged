@@ -7,6 +7,7 @@ Trade directly with other players through familiar inventory windows. An indepen
 Interact with a nearby player to request a trade. They interact with you to accept. Place items in **You Will Give**, review **You Will Receive**, and press **Accept Trade**. Both players must accept the same offers. **Change Trade** withdraws acceptance; editing an offer resets both players' acceptance; **Cancel Trade** returns your items.
 
 - The original two-panel layout, green acceptance indicators, stack splitting, quick move, and controller buttons remain.
+- Personal and partner inventories sit above the offer windows in an aligned grid, with trade buttons and projected weights below. Your normal inventory position returns when trading closes.
 - A separate **Partner's Inventory** panel shows the other player's inventory during a trade, including equipped items. It updates as items change and is read-only. Items only change ownership through the offer windows after both players accept.
 - Press **F11** to reposition windows and buttons. Positions and the optional trade modifier key remain configurable.
 - Both trading players need this version. Other players and the server do not need the mod.
@@ -37,7 +38,7 @@ dotnet build src/PlayerTradingReforged/PlayerTradingReforged.csproj -c Release -
   -p:BepInExDir="/path/to/profile/BepInEx"
 ```
 
-Requires .NET SDK 8 and Bun 1.4.1+. Output: `artifacts/PlayerTradingReforged-1.1.0.zip`. Building never installs or publishes the mod.
+Requires .NET SDK 8 and Bun 1.4.1+. Output: `artifacts/PlayerTradingReforged-1.1.1.zip`. Building never installs or publishes the mod.
 
 The current build is checked against the installed 1.0.12 assemblies, with automated protocol, capacity, packaging, and Harmony compatibility checks. **Two-client gameplay and visual/controller checks are still required** before calling this release tested in-game. See the [test checklist](docs/TESTING.md) and [development instructions](docs/DEVELOPMENT.md).
 

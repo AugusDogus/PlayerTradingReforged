@@ -10,15 +10,13 @@ internal sealed class PreviewTradeWindow : TradeWindow
     private GameObject? _clone;
     private TMP_Text? _weight;
     private TMP_Text? _title;
-    private RectTransform? _placement;
     private float _horizontalPadding;
-    public void Initialize(string name, string title, ConfigEntry<Vector2> offset, RectTransform? placement = null)
+    public void Initialize(string name, string title, ConfigEntry<Vector2> offset)
     {
         var source = InventoryGui.instance.m_container;
         _clone = Instantiate(source.gameObject, InventoryGui.instance.m_inventoryRoot, false);
         _clone.name = name;
         Initialize(_clone.GetComponent<RectTransform>(), title, false, offset);
-        _placement = placement;
         _horizontalPadding = Mathf.Max(0f, Panel.rect.width - Grid.GetComponent<RectTransform>().rect.width);
         Grid.m_onSelected = null; Grid.m_onRightClick = null;
         Grid.m_onReleased = null; Grid.m_onEnter = null;
@@ -40,19 +38,17 @@ internal sealed class PreviewTradeWindow : TradeWindow
     {
         Inventory = inventory;
         if (_title != null) _title.text = title;
-        // Extra rows scroll within the existing container; fit wider modded inventories to the crafting area.
+        // Extra rows scroll within the existing container.
         Panel.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
             _horizontalPadding + inventory.GetWidth() * Grid.m_elementSpace);
-        UpdatePosition();
         Refresh();
     }
-    protected override void UpdatePosition()
+    protected override void Update()
     {
-        if (_placement == null) { base.UpdatePosition(); return; }
-        Panel.pivot = new Vector2(0, 1);
-        Panel.localScale = Vector3.one * Mathf.Min(1f, _placement.rect.width / Panel.rect.width);
-        Panel.position = _placement.TransformPoint(new Vector3(_placement.rect.xMin, _placement.rect.yMax, 0));
-        Panel.anchoredPosition += new Vector2(UserOffset.x, -UserOffset.y);
+        base.Update();
+        // Valheim populates tooltips only for the currently hovered slot.
+        // Refresh even when the remote inventory snapshot has not changed.
+        if (Visible) Refresh();
     }
     public override void Show() { base.Show(); if (_clone != null) _clone.SetActive(true); }
     public override void Hide() { base.Hide(); if (_clone != null) _clone.SetActive(false); }

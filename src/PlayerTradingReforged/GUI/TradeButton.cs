@@ -15,12 +15,11 @@ internal sealed class TradeButton : MonoBehaviour
     private Image? _image;
     private Color _original;
     private ConfigEntry<Vector2>? _offset;
-    private float _verticalOffset;
     private bool _editing, _moving;
 
-    public void Initialize(string title, UnityAction action, ConfigEntry<Vector2> offset, UIGroupHandler group, string joyButton, string joyHint, float verticalOffset)
+    public void Initialize(string title, UnityAction action, ConfigEntry<Vector2> offset, UIGroupHandler group, string joyButton, string joyHint)
     {
-        _offset = offset; _verticalOffset = verticalOffset;
+        _offset = offset;
         _object = Instantiate(InventoryGui.instance.m_takeAllButton.gameObject, InventoryGui.instance.m_inventoryRoot, false);
         _object.name = "PlayerTradingReforged" + joyHint;
         _button = _object.GetComponent<Button>();
@@ -32,7 +31,7 @@ internal sealed class TradeButton : MonoBehaviour
         gamepad.m_zinputKey = joyButton; gamepad.m_group = group;
         var hint = _object.transform.Find("gamepad_hint").GetComponentInChildren<TMP_Text>(true);
         hint.text = joyHint;
-        SetText(title); SetAction(action); UpdatePosition(); SetActive(false);
+        SetText(title); SetAction(action); SetActive(false);
     }
 
     private void Update()
@@ -45,13 +44,13 @@ internal sealed class TradeButton : MonoBehaviour
             if (Input.GetMouseButtonUp(0)) _moving = false;
             if (_moving) _offset.Value += new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * 8f;
         }
-        UpdatePosition();
     }
-    private void UpdatePosition()
+    public void Place(RectTransform root, Vector2 position, float scale)
     {
         if (_rect == null || _offset == null) return;
-        Vector2 anchor = new Vector2(0.5f + _offset.Value.x / Screen.width, 0.5f + _verticalOffset / 30f + _offset.Value.y / Screen.height);
-        _rect.anchorMin = anchor; _rect.anchorMax = anchor; _rect.anchoredPosition = anchor;
+        _rect.pivot = new Vector2(0.5f, 1);
+        _rect.localScale = Vector3.one * scale;
+        _rect.position = root.TransformPoint(position + _offset.Value);
     }
     public void SetText(string text) { if (_text != null) _text.text = text; }
     public void SetAction(UnityAction action)

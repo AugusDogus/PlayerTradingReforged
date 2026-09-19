@@ -26,7 +26,8 @@ namespace PlayerTradingReforged
         public string NotEnoughInventorySlots = "Not enough inventory slots";
         public string ToGiveWindowText = "You Will Give";
         public string ToReceiveWindowText = "You Will Receive";
-        public string PartnerInventoryText = "Partner's Inventory (Read Only)";
+        public string PartnerInventoryText = "Partner's Inventory";
+        public string AfterTradeWeightText = "After trade: You {0} | Partner {1}";
         public string PartnerInventoryWaiting = "Waiting for Partner's Inventory";
         public string PartnerInventoryUnavailable = "Partner's Inventory Unavailable";
         public string AcceptTradeButtonText = "Accept Trade";
@@ -40,7 +41,7 @@ namespace PlayerTradingReforged
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string PluginId = "augusdogus.mods.PlayerTradingReforged";
-        public const string PluginVersion = "1.1.0";
+        public const string PluginVersion = "1.1.1";
         private static Plugin? _instance;
         private readonly Harmony _harmony = new Harmony(PluginId);
         private TradeHandler? _handler;
@@ -78,6 +79,8 @@ namespace PlayerTradingReforged
                 Directory.CreateDirectory(Paths.ConfigPath);
                 if (File.Exists(path)) JsonUtility.FromJsonOverwrite(File.ReadAllText(path), Localization);
                 else File.WriteAllText(path, JsonUtility.ToJson(Localization, true));
+                if (Localization.PartnerInventoryText == "Partner's Inventory (Read Only)")
+                    Localization.PartnerInventoryText = new StringLocalization().PartnerInventoryText;
             }
             catch (Exception error) when (error is IOException || error is UnauthorizedAccessException || error is ArgumentException)
             {
