@@ -27,7 +27,8 @@ namespace PlayerTradingReforged
         public string ToGiveWindowText = "You Will Give";
         public string ToReceiveWindowText = "You Will Receive";
         public string PartnerInventoryText = "Partner's Inventory";
-        public string AfterTradeWeightText = "After trade: You {0} | Partner {1}";
+        public string NamedInventoryText = "{0}’s Inventory";
+        public string ProjectedWeightText = "After trade";
         public string PartnerInventoryWaiting = "Waiting for Partner's Inventory";
         public string PartnerInventoryUnavailable = "Partner's Inventory Unavailable";
         public string AcceptTradeButtonText = "Accept Trade";
@@ -41,7 +42,7 @@ namespace PlayerTradingReforged
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string PluginId = "augusdogus.mods.PlayerTradingReforged";
-        public const string PluginVersion = "1.1.1";
+        public const string PluginVersion = "1.1.2";
         private static Plugin? _instance;
         private readonly Harmony _harmony = new Harmony(PluginId);
         private TradeHandler? _handler;

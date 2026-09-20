@@ -49,6 +49,47 @@ public sealed class TradeRecoveryTests
     }
 
     [Fact]
+    public void TradeUsesTheOtherCharactersName()
+    {
+        var (a, b) = Pair();
+        Assert.Equal(b.Player.GetPlayerName(), a.UI.PartnerName);
+    }
+
+    [Fact]
+    public void CapacityChangesAreSharedWithoutInventoryChanges()
+    {
+        var (a, b) = Pair();
+        a.Player.MaxCarryWeight = 450;
+        a.Trade.Tick();
+        var message = Assert.Single(a.Handler.Messages, m => m.Kind == "capacity");
+        b.Trade.Receive(message.Kind, message.Local, message.Remote, message.Items);
+        Assert.Equal(450f, b.UI.PartnerCapacity);
+        a.Handler.Messages.Clear();
+        Time.unscaledTime = 0.5f; a.Trade.Tick();
+        Assert.DoesNotContain(a.Handler.Messages, m => m.Kind == "capacity");
+        a.Player.MaxCarryWeight = 300;
+        Time.unscaledTime = 1f; a.Trade.Tick();
+        message = Assert.Single(a.Handler.Messages, m => m.Kind == "capacity");
+        b.Trade.Receive(message.Kind, message.Local, message.Remote, message.Items);
+        Assert.Equal(300f, b.UI.PartnerCapacity);
+        Assert.Equal(0, b.Trade.Session.RemoteRevision);
+    }
+
+    [Theory]
+    [InlineData("NaN")]
+    [InlineData("Infinity")]
+    [InlineData("-1")]
+    [InlineData("invalid")]
+    public void InvalidCapacityClearsTheDisplayWithoutCancellingTrade(string value)
+    {
+        var (a, _) = Pair();
+        a.Trade.Receive("capacity", 0, 0, "450");
+        a.Trade.Receive("capacity", 0, 0, value);
+        Assert.Null(a.UI.PartnerCapacity);
+        Assert.Equal(TradeSession.Phase.Editing, a.Trade.Session.State);
+    }
+
+    [Fact]
     public void TradeSharesInventoryOnFirstTickAndOnlyResendsChanges()
     {
         var (a, _) = Pair();

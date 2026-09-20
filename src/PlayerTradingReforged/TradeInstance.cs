@@ -1,3 +1,4 @@
+using System.Globalization;
 using PlayerTradingReforged.GUI;
 using PlayerTradingReforged.Trading;
 using UnityEngine;
@@ -17,6 +18,7 @@ internal sealed class TradeInstance
     private float _nextHeartbeat;
     private float _nextInventoryPreview;
     private string? _lastInventoryPreview;
+    private float? _lastCarryCapacity;
     public TradeSession Session { get; }
     public Inventory Give { get; }
     private Inventory ReceiveItems { get; }
@@ -33,6 +35,7 @@ internal sealed class TradeInstance
     public void Open()
     {
         _windows.StartNewInstance();
+        _windows.SetPartnerName(_peer.GetPlayerName());
         _windows.OnTradeAcceptPressed += Accept;
         _windows.OnChangeTradePressed += Change;
         _windows.OnCancelTradePressed += Cancel;
@@ -86,6 +89,10 @@ internal sealed class TradeInstance
         switch (kind)
         {
             case "heartbeat": break;
+            case "capacity":
+                _windows.SetPartnerCapacity(float.TryParse(items, NumberStyles.Float, CultureInfo.InvariantCulture, out float capacity)
+                    && !float.IsNaN(capacity) && !float.IsInfinity(capacity) && capacity >= 0 ? capacity : null);
+                break;
             case "inventory":
                 _windows.ShowPartnerInventory(TradeInventory.TryLoadPreview(items, out var preview) ? preview : null);
                 break;
@@ -154,6 +161,12 @@ internal sealed class TradeInstance
         {
             _nextInventoryPreview = Time.unscaledTime + 0.5f;
             // Poll while trading to include durability/equipment changes that do not raise Inventory.Changed.
+            float capacity = _local.GetMaxCarryWeight();
+            if (capacity != _lastCarryCapacity)
+            {
+                _handler.Send(Session, "capacity", capacity.ToString("R", CultureInfo.InvariantCulture));
+                _lastCarryCapacity = capacity;
+            }
             string preview = TradeInventory.SavePreview(_local.GetInventory());
             if (preview != _lastInventoryPreview)
             {

@@ -34,6 +34,7 @@ internal sealed class PreviewTradeWindow : TradeWindow
         Group.ResetActiveElement(); Group.SetActive(false);
         Hide();
     }
+    public void SetTitle(string title) { if (_title != null) _title.text = title; }
     public void Display(Inventory inventory, string title)
     {
         Inventory = inventory;

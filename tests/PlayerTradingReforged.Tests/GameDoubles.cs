@@ -24,6 +24,9 @@ public sealed class Inventory
 public sealed class Player
 {
     public long Id;
+    public float MaxCarryWeight = 300;
+    public float GetMaxCarryWeight() => MaxCarryWeight;
+    public string GetPlayerName() => "Trader " + Id;
     public bool Dead;
     public bool Teleporting;
     public readonly Dictionary<string, string> m_customData = new();
@@ -91,6 +94,10 @@ namespace PlayerTradingReforged.GUI
         public static TradeWindowManager Instance { get; set; } = new();
         public Inventory Give = new(), Receive = new();
         public Inventory? PartnerInventory;
+        public float? PartnerCapacity;
+        public string? PartnerName;
+        public void SetPartnerCapacity(float? capacity) => PartnerCapacity = capacity;
+        public void SetPartnerName(string name) => PartnerName = name;
         public event Action? OnTradeAcceptPressed;
         public event Action? OnCancelTradePressed;
         public event Action? OnChangeTradePressed;

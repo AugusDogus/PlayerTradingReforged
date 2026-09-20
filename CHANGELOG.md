@@ -1,4 +1,10 @@
-# 1.1.1 (unreleased)
+# 1.1.2 (unreleased)
+
+- Show current and projected weights with carrying capacity inside native-style inventory weight badges.
+- Share carrying capacity changes, including equipment bonuses, during trades.
+- Use the partner’s character name in their inventory title.
+
+# 1.1.1
 
 - Align personal and partner inventories above the two offer windows, with trade buttons below.
 - Restore the personal inventory position when trading closes.
