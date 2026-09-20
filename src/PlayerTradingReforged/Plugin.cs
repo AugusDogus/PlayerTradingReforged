@@ -44,7 +44,7 @@ namespace PlayerTradingReforged
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string PluginId = "augusdogus.mods.PlayerTradingReforged";
-        public const string PluginVersion = "1.2.2";
+        public const string PluginVersion = "1.0.0";
         private static Plugin? _instance;
         private readonly Harmony _harmony = new Harmony(PluginId);
         private TradeHandler? _handler;
