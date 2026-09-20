@@ -4,6 +4,8 @@
 
 Trade directly with other players through familiar inventory windows. An independent rewrite of [projjm's Player Trading](https://github.com/projjm/Valheim-Player-Trading) for Valheim **1.0.12**.
 
+![Trading interface showing both players' inventories, equipped items, trade offers, and weight previews](https://raw.githubusercontent.com/AugusDogus/PlayerTradingReforged/main/docs/images/trading.png)
+
 Interact with a nearby player to request a trade. They interact with you to accept. Place items in **You Will Give**, review **You Will Receive**, and press **Accept Trade**. Both players must accept the same offers. **Change Trade** withdraws acceptance; editing an offer resets both players' acceptance; **Cancel Trade** returns your items.
 
 - Two offer windows support green acceptance indicators, stack splitting, quick move, and controller buttons.
