@@ -1,3 +1,4 @@
+using System.Linq;
 using HarmonyLib;
 using PlayerTradingReforged.GUI;
 using UnityEngine;
@@ -75,7 +76,11 @@ internal static class InventoryGuiPatches
         {
             if (!Active || __instance.m_currentContainer != null) return true;
             if (Editable && Offer is Inventory inventory && !Player.m_localPlayer.IsTeleporting())
-            { __instance.SetupDragItem(null, null, 1); Player.m_localPlayer.GetInventory().MoveAll(inventory); }
+            {
+                __instance.SetupDragItem(null, null, 1);
+                foreach (var item in inventory.GetAllItems().ToArray())
+                    Player.m_localPlayer.GetInventory().MoveItemToThis(inventory, item);
+            }
             return false;
         }
     }

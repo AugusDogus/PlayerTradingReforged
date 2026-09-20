@@ -2,6 +2,7 @@ using System;
 using PlayerTradingReforged.Patterns;
 using PlayerTradingReforged.Trading;
 using UnityEngine;
+using TMPro;
 
 namespace PlayerTradingReforged.GUI;
 
@@ -28,6 +29,9 @@ internal sealed class TradeWindowManager : MonoSingleton<TradeWindowManager>
     private float? _partnerCapacity;
     private string? _partnerName;
     private bool _partnerAvailable;
+    private TMP_Text? _ownTitle;
+    public OfferedInventoryView? OfferedView { get; private set; }
+    public void ClearOfferedView() { OfferedView?.Clear(); OfferedView = null; }
     public event Action? OnTradeAcceptPressed;
     public event Action? OnCancelTradePressed;
     public event Action? OnChangeTradePressed;
@@ -47,6 +51,17 @@ internal sealed class TradeWindowManager : MonoSingleton<TradeWindowManager>
         _windows = new Windows(give, receive, partner, accept, cancel);
         _ownWeight = new TradeWeightBadge(InventoryGui.instance.m_weight.transform.parent.GetComponent<RectTransform>());
         _partnerWeight = new TradeWeightBadge(partner.Panel.Find("Weight").GetComponent<RectTransform>());
+        _ownTitle = Instantiate(InventoryGui.instance.m_containerName, InventoryGui.instance.m_player, false);
+        _ownTitle.name = "PlayerTradingReforgedYourInventory";
+        _ownTitle.text = Plugin.Localization.YourInventoryText;
+        _ownTitle.raycastTarget = false;
+        _ownTitle.alignment = TextAlignmentOptions.Center;
+        var titleRect = _ownTitle.rectTransform;
+        titleRect.anchorMin = titleRect.anchorMax = new Vector2(0.5f, 1);
+        titleRect.pivot = new Vector2(0.5f, 0);
+        titleRect.sizeDelta = new Vector2(InventoryGui.instance.m_player.rect.width, 45);
+        titleRect.anchoredPosition = new Vector2(0, 4);
+        _ownTitle.gameObject.SetActive(false);
     }
     private void AcceptClicked() => OnTradeAcceptPressed?.Invoke();
     private void CancelClicked() => OnCancelTradePressed?.Invoke();
@@ -83,6 +98,8 @@ internal sealed class TradeWindowManager : MonoSingleton<TradeWindowManager>
         _partnerAvailable = false;
         _partnerCapacity = null; _partnerName = null;
         _ownWeight?.Show(); _partnerWeight?.Show();
+        OfferedView = new OfferedInventoryView(Player.m_localPlayer.GetInventory(), UI.Give.Inventory);
+        if (_ownTitle != null) _ownTitle.gameObject.SetActive(true);
         _mode = Mode.Trading;
         _animationSpeed = InventoryGui.instance.m_animator.speed;
         InventoryGui.instance.CloseContainer();
@@ -119,6 +136,8 @@ internal sealed class TradeWindowManager : MonoSingleton<TradeWindowManager>
     public void CancelInstance()
     {
         if (_mode == Mode.Closed || _windows == null) return;
+        ClearOfferedView();
+        if (_ownTitle != null) _ownTitle.gameObject.SetActive(false);
         _mode = Mode.Closed;
         SetEditMode(false);
         UI.Accept.SetActive(false); UI.Cancel.SetActive(false);
@@ -143,7 +162,7 @@ internal sealed class TradeWindowManager : MonoSingleton<TradeWindowManager>
         const float sideSpace = 140, gap = 24, footer = 65;
         float column = Mathf.Max(Mathf.Max(player.rect.width, UI.Partner.Panel.rect.width),
             Mathf.Max(UI.Give.Panel.rect.width, UI.Receive.Panel.rect.width)) + sideSpace;
-        float topHeight = Mathf.Max(player.rect.height, UI.Partner.Panel.rect.height);
+        float topHeight = Mathf.Max(player.rect.height + 50, UI.Partner.Panel.rect.height);
         float bottomHeight = Mathf.Max(UI.Give.Panel.rect.height, UI.Receive.Panel.rect.height);
         float width = column * 2 + gap;
         float height = topHeight + gap + bottomHeight + footer;
@@ -151,27 +170,28 @@ internal sealed class TradeWindowManager : MonoSingleton<TradeWindowManager>
         var origin = new Vector2(root.rect.center.x - width * scale / 2 + sideSpace * scale / 2,
             root.rect.center.y + height * scale / 2);
         player.pivot = new Vector2(0, 1); player.localScale = Vector3.one * scale;
-        player.position = root.TransformPoint(origin);
+        player.position = root.TransformPoint(origin + new Vector2(0, -50 * scale));
         UI.Partner.Place(root, origin + new Vector2((column + gap) * scale, 0), scale);
         float lowerY = -(topHeight + gap) * scale;
         UI.Give.Place(root, origin + new Vector2(0, lowerY), scale);
         UI.Receive.Place(root, origin + new Vector2((column + gap) * scale, lowerY), scale);
         float footerY = origin.y + lowerY - (bottomHeight + 20) * scale;
         float center = root.rect.center.x;
-        UI.Accept.Place(root, new Vector2(center - 100 * scale, footerY), scale);
-        UI.Cancel.Place(root, new Vector2(center + 100 * scale, footerY), scale);
+        UI.Accept.Place(root, new Vector2(center + 100 * scale, footerY), scale);
+        UI.Cancel.Place(root, new Vector2(center - 100 * scale, footerY), scale);
         if (Player.m_localPlayer != null)
         {
             // Offers are already in escrow, outside each player's current inventory.
             float own = Player.m_localPlayer.GetInventory().GetTotalWeight();
-            _ownWeight?.Display(own, own + UI.Receive.Inventory.GetTotalWeight(), Player.m_localPlayer.GetMaxCarryWeight());
+            _ownWeight?.Display(own + UI.Give.Inventory.GetTotalWeight(), own + UI.Receive.Inventory.GetTotalWeight(), Player.m_localPlayer.GetMaxCarryWeight());
             float? partner = _partnerAvailable ? UI.Partner.Inventory.GetTotalWeight() : null;
-            _partnerWeight?.Display(partner, partner + UI.Give.Inventory.GetTotalWeight(), _partnerCapacity);
+            _partnerWeight?.Display(partner + UI.Receive.Inventory.GetTotalWeight(), partner + UI.Give.Inventory.GetTotalWeight(), _partnerCapacity);
         }
     }
     private void OnDestroy()
     {
         CancelInstance();
         _ownWeight?.Destroy(); _partnerWeight?.Destroy();
+        if (_ownTitle != null) Destroy(_ownTitle.gameObject);
     }
 }

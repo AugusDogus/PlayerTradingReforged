@@ -15,7 +15,8 @@ public static class HUDTools
             return;
         }
         if (!InventoryGui.instance || States.Count != 0) return;
-        foreach (var panel in new[] { InventoryGui.instance.m_crafting.gameObject, InventoryGui.instance.m_info.gameObject })
+        foreach (var panel in new[] { InventoryGui.instance.m_crafting.gameObject, InventoryGui.instance.m_info.gameObject,
+            InventoryGui.instance.m_armor.transform.parent.gameObject })
         { States[panel] = panel.activeSelf; panel.SetActive(false); }
     }
 }

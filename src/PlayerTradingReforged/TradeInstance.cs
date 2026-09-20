@@ -139,6 +139,7 @@ internal sealed class TradeInstance
     private void Finish()
     {
         _closed = true;
+        _windows.ClearOfferedView();
         Give.RemoveAll();
         // Preserve any unexpected overflow from another mod as recoverable local items.
         var entry = new TradeRecovery.Entry { Session = Session.Id, PeerCharacter = _peerCharacter,
@@ -198,6 +199,7 @@ internal sealed class TradeInstance
     private void Refund(bool localCancellation)
     {
         _closed = true;
+        _windows.ClearOfferedView();
         if (Session.IsCoordinator) TradeRecovery.RecordDecision(_local, Session.Id, _peerCharacter, false);
         var entry = new TradeRecovery.Entry { Session = Session.Id, PeerCharacter = _peerCharacter, Give = TradeInventory.Save(Give) };
         TradeRecovery.Resolve(_local, entry, false);

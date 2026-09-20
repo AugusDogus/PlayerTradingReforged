@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using PlayerTradingReforged.Trading;
 
-public sealed class Inventory
+public sealed partial class Inventory
 {
     public int Capacity = 24;
     public readonly List<string> Items = new();
@@ -70,6 +70,7 @@ namespace PlayerTradingReforged
         public static readonly Strings Localization = new();
         internal sealed class Strings
         {
+            public string ReservedForTradeText = "{0} reserved for trade";
             public string NotEnoughInventorySlots = "full", TradeInvalid = "invalid", TradeSuccessful = "success",
                 TradePending = "pending", LocalPlayerCancelledTrade = "cancelled", XHasCancelledTrade = "remote cancelled";
         }
@@ -107,6 +108,7 @@ namespace PlayerTradingReforged.GUI
         public Inventory GetToTradeInventory() => Give;
         public Inventory GetToReceiveInventory() => Receive;
         public void StartNewInstance() { }
+        public void ClearOfferedView() { }
         public void CancelInstance() => PartnerInventory = null;
         public void SetToTradeAccepted(bool value) { }
         public void SetToReceiveAccepted(bool value) { }

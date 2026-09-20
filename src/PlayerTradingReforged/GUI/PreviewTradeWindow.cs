@@ -57,6 +57,12 @@ internal sealed class PreviewTradeWindow : TradeWindow
     public override void Refresh()
     {
         base.Refresh();
+        foreach (var element in Grid.m_elements)
+        {
+            var item = Inventory.GetItemAt(element.Position.x, element.Position.y);
+            element.m_equiped.enabled = item != null && item.m_equipped;
+            element.m_equiped.color = new Color(0.35f, 0.65f, 0.59f, 0.65f);
+        }
         if (_weight != null) _weight.text = Mathf.CeilToInt(Inventory.GetTotalWeight()).ToString();
     }
     private void OnDestroy() { if (_clone != null) Destroy(_clone); }

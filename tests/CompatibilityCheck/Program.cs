@@ -29,7 +29,7 @@ foreach (Type type in plugin.GetTypes())
 {
     HarmonyPatch[] attributes = type.GetCustomAttributes<HarmonyPatch>().ToArray();
     if (attributes.Length == 0) continue;
-    foreach (MethodInfo patch in type.GetMethods(flags).Where(method => method.Name is "Prefix" or "Postfix"))
+    foreach (MethodInfo patch in type.GetMethods(flags).Where(method => method.Name is "Prefix" or "Postfix" or "Finalizer"))
     {
         HarmonyMethod[] descriptions = attributes.Concat(patch.GetCustomAttributes<HarmonyPatch>()).Select(attribute => attribute.info).ToArray();
         Type? targetType = descriptions.LastOrDefault(info => info.declaringType != null)?.declaringType;

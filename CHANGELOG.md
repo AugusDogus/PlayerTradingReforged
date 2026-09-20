@@ -1,4 +1,12 @@
-# 1.1.2 (unreleased)
+# 1.2.0 (unreleased)
+
+- Add a Your Inventory heading and muted teal highlights for the partner’s equipped items.
+- Hide the armor badge during trading and place Cancel on the left, Accept on the right.
+- Keep current weight steady when items move into or out of the offer; update the projected weight instead.
+- Keep offered items visible in their original inventory slots with the vanilla dragged-item grey tint. Partial stacks show available and reserved counts.
+- Reserve those slots against pickups and drops, and release them when offers return or the trade closes. Keep the existing escrow recovery behavior.
+
+# 1.1.2
 
 - Show current and projected weights with carrying capacity inside native-style inventory weight badges.
 - Share carrying capacity changes, including equipment bonuses, during trades.
