@@ -2,52 +2,30 @@
   <img src="package/banner.png" alt="Player Trading Reforged: player trading for Valheim" width="900">
 </p>
 
-Trade directly with other players through familiar inventory windows. An independent rewrite of [projjm's Player Trading](https://github.com/projjm/Valheim-Player-Trading) for Valheim **1.0.12**.
+Trade with other players through familiar Valheim inventory windows. See each other’s items, equipped gear, and weight before and after the trade.
 
 ![Trading interface showing both players' inventories, equipped items, trade offers, and weight previews](https://raw.githubusercontent.com/AugusDogus/PlayerTradingReforged/main/docs/images/trading.png)
 
-Interact with a nearby player to request a trade. They interact with you to accept. Place items in **You Will Give**, review **You Will Receive**, and press **Accept Trade**. Both players must accept the same offers. **Change Trade** withdraws acceptance; editing an offer resets both players' acceptance; **Cancel Trade** returns your items.
+## How to trade
 
-- Two offer windows support green acceptance indicators, stack splitting, quick move, and controller buttons.
-- Offered items stay visible as grey reservations in **Your Inventory** and in your partner’s preview. Stack labels use the usual count/limit format. Partial stacks show the usable count; tooltips show the reserved quantity. Return items from the offer window to make them usable again.
-- Current weight includes your offered items, so moving items into the offer changes only the after-trade weight.
-- Personal and partner inventories sit above the offer windows in an aligned grid, with trade buttons below and current/projected weights in matching inventory badges. Your normal inventory position returns when trading closes.
-- A separate panel titled with your partner’s character name shows the other player's inventory during a trade, including equipped items highlighted in muted teal. It updates as items change and is read-only. Items only change ownership through the offer windows after both players accept.
-- Press **F11** to reposition windows and buttons. Positions and the optional trade modifier key remain configurable.
-- Both trading players need this version. Other players and the server do not need the mod.
-- Custom items require matching item mods on both clients. Unknown or malformed offers cancel instead of silently dropping items.
+1. Interact with a nearby player. They interact with you to accept the request.
+2. Place items in **You Will Give** and review **You Will Receive**.
+3. Both players press **Accept Trade** to complete the exchange.
 
-The preview uses the main player inventory; separate equipment or backpack inventories from other mods are not included. If the preview cannot be read because item mods differ or an inventory exceeds the supported 16 columns or 32 rows, the panel displays **Unavailable** and trading remains possible. Inventory sharing stops when the trade closes. Weight badges show current and after-trade weight against the current carrying limit; an unknown limit displays `?`.
+Offered items stay greyed out in both inventory previews. Changing an offer resets acceptance. **Cancel Trade** returns your items.
 
-## Installation
+Supports stack splitting, quick move, and controllers. Press **F11** to reposition the windows.
 
-Install **BepInExPack_Valheim 5.4.2350** in your mod profile, then install **PlayerTradingReforged** through r2modman or Thunderstore Mod Manager. For manual installation, place `PlayerTradingReforged.dll` in `BepInEx/plugins/PlayerTradingReforged/`.
+## Install
 
-This is an independent mod with fresh settings. It does not read or migrate the original Player Trading configuration or translations. Settings use `augusdogus.mods.PlayerTradingReforged.cfg`; translations use `augusdogus.mods.PlayerTradingReforged.strings.json`. Both traders need Player Trading Reforged. Jötunn is not required.
+Install through **r2modman** or **Thunderstore Mod Manager** with **BepInExPack_Valheim**. Both players need the same mod version; the server does not need it. Tested with Valheim **1.0.12**.
 
-## Interrupted trades
+Custom items need matching mods on both clients. Only the main inventory is shared, including expanded main inventories. Separate equipment and backpack inventories are not shown.
 
-Cancellation returns the offered items. If your inventory filled up meanwhile, remaining items stay in the character's trade recovery data and return when space becomes available. New trades are blocked until recovery finishes.
+If a trade is interrupted, make room for returned items or reconnect both characters to resolve it. See [recovery details](docs/RECOVERY.md).
 
-If the connection fails during final confirmation, the trade waits for the other player's decision instead of refunding items that may already have been exchanged. Reconnect both characters in the same world and bring them near one another to resolve it. Keep this mod and the relevant item mods installed until recovery completes.
+## Credits & development
 
-Recovery data is included in normal character saves. This is a client-side exchange, not a server-authoritative transaction: process crashes, restoring an older save, or modified clients can still break consistency between character saves. It is not an anti-cheat system or a guarantee against hard-crash item loss/duplication.
+An independent rewrite of [projjm’s Player Trading](https://github.com/projjm/Valheim-Player-Trading), with fresh settings.
 
-## Build and verification
-
-```sh
-bun install --frozen-lockfile
-dotnet build src/PlayerTradingReforged/PlayerTradingReforged.csproj -c Release -t:Package \
-  -p:GameDir="/path/to/Valheim" \
-  -p:BepInExDir="/path/to/profile/BepInEx"
-```
-
-Requires .NET SDK 8 and Bun 1.4.1+. Output: `artifacts/PlayerTradingReforged-1.0.0.zip`. Building never installs or publishes the mod.
-
-The current build is checked against the installed 1.0.12 assemblies, with automated protocol, capacity, packaging, and Harmony compatibility checks. Two-player trading and the inventory interface have been tested in-game. The full controller, disconnect, and recovery test matrix remains documented for further verification. See the [test checklist](docs/TESTING.md) and [development instructions](docs/DEVELOPMENT.md).
-
-## Credits
-
-Original Player Trading code and interface by **projjm**. Player Trading Reforged has its own icon and banner. Repository structure and release tooling follow [ValheimModTemplate](https://github.com/AugusDogus/ValheimModTemplate).
-
-[Original video preview](https://www.youtube.com/watch?v=jc0tMuEjXbM)
+[Build instructions](docs/DEVELOPMENT.md) · [Test checklist](docs/TESTING.md) · [Changelog](CHANGELOG.md)
