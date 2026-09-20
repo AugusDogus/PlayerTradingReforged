@@ -1,3 +1,9 @@
+# 1.0.1
+
+- Simplify the README and add an in-game screenshot.
+- Include the AI Generated category in automated Thunderstore releases.
+- No gameplay changes.
+
 # 1.0.0
 
 - Trade directly with nearby players, with offer confirmation, stack splitting, quick move, and controller support.
