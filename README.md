@@ -7,7 +7,7 @@ Trade directly with other players through familiar inventory windows. An indepen
 Interact with a nearby player to request a trade. They interact with you to accept. Place items in **You Will Give**, review **You Will Receive**, and press **Accept Trade**. Both players must accept the same offers. **Change Trade** withdraws acceptance; editing an offer resets both players' acceptance; **Cancel Trade** returns your items.
 
 - The original two-panel layout, green acceptance indicators, stack splitting, quick move, and controller buttons remain.
-- Offered items stay visible as grey reservations in **Your Inventory**. Stack labels use the usual count/limit format. Partial stacks show the usable count; tooltips show the reserved quantity. Return items from the offer window to make them usable again.
+- Offered items stay visible as grey reservations in **Your Inventory** and in your partner’s preview. Both players need **1.2.2 or newer** to share reservations. Stack labels use the usual count/limit format. Partial stacks show the usable count; tooltips show the reserved quantity. Return items from the offer window to make them usable again.
 - Current weight includes your offered items, so moving items into the offer changes only the after-trade weight.
 - Personal and partner inventories sit above the offer windows in an aligned grid, with trade buttons below and current/projected weights in matching inventory badges. Your normal inventory position returns when trading closes.
 - A separate panel titled with your partner’s character name shows the other player's inventory during a trade, including equipped items highlighted in muted teal. It updates as items change and is read-only. Items only change ownership through the offer windows after both players accept.
@@ -40,7 +40,7 @@ dotnet build src/PlayerTradingReforged/PlayerTradingReforged.csproj -c Release -
   -p:BepInExDir="/path/to/profile/BepInEx"
 ```
 
-Requires .NET SDK 8 and Bun 1.4.1+. Output: `artifacts/PlayerTradingReforged-1.2.1.zip`. Building never installs or publishes the mod.
+Requires .NET SDK 8 and Bun 1.4.1+. Output: `artifacts/PlayerTradingReforged-1.2.2.zip`. Building never installs or publishes the mod.
 
 The current build is checked against the installed 1.0.12 assemblies, with automated protocol, capacity, packaging, and Harmony compatibility checks. **Two-client gameplay and visual/controller checks are still required** before calling this release tested in-game. See the [test checklist](docs/TESTING.md) and [development instructions](docs/DEVELOPMENT.md).
 

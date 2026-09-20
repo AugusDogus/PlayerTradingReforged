@@ -1,4 +1,10 @@
-# 1.2.1 (unreleased)
+# 1.2.2 (unreleased)
+
+- Show the partner’s offered items greyed out in their original inventory slots.
+- Share available items and reservations in one preview update, including partial stacks and reservation tooltips.
+- Keep the synchronized weight totals and trade ownership unchanged.
+
+# 1.2.1
 
 - Put Your Inventory inside the same framed header as the partner inventory.
 - Send current, in-bag, and maximum weights together from the owner, preventing brief double counting when offer and inventory updates arrive separately.

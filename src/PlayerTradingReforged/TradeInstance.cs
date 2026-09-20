@@ -20,6 +20,8 @@ internal sealed class TradeInstance
     private string? _lastInventoryPreview;
     private float? _lastCarryCapacity;
     private string? _lastWeights;
+    private string? _lastReservedPreview;
+    private bool _receivedReservedPreview;
     public TradeSession Session { get; }
     public Inventory Give { get; }
     private Inventory ReceiveItems { get; }
@@ -97,7 +99,12 @@ internal sealed class TradeInstance
                 _windows.SetPartnerCapacity(float.TryParse(items, NumberStyles.Float, CultureInfo.InvariantCulture, out float capacity)
                     && !float.IsNaN(capacity) && !float.IsInfinity(capacity) && capacity >= 0 ? capacity : null);
                 break;
+            case "inventory-reservations":
+                _receivedReservedPreview = true;
+                _windows.ShowPartnerPreview(TradePreviewSnapshot.Parse(items));
+                break;
             case "inventory":
+                if (_receivedReservedPreview) break;
                 _windows.ShowPartnerInventory(TradeInventory.TryLoadPreview(items, out var preview) ? preview : null);
                 break;
             case "offer":
@@ -183,6 +190,13 @@ internal sealed class TradeInstance
             {
                 _handler.Send(Session, "inventory", preview);
                 _lastInventoryPreview = preview;
+            }
+            // Keep the legacy message for older clients; upgraded clients use this atomic preview.
+            string reservedPreview = new TradePreviewSnapshot(_local.GetInventory(), _windows.GetReservedInventory()).Encode();
+            if (reservedPreview != _lastReservedPreview)
+            {
+                _handler.Send(Session, "inventory-reservations", reservedPreview);
+                _lastReservedPreview = reservedPreview;
             }
         }
         if ((Session.State == TradeSession.Phase.Preparing || Session.State == TradeSession.Phase.Prepared) && Time.unscaledTime - _prepareStarted > 10f)

@@ -11,6 +11,7 @@ internal sealed class PreviewTradeWindow : TradeWindow
     private TMP_Text? _weight;
     private TMP_Text? _title;
     private float _horizontalPadding;
+    private Inventory? _reservations;
     public void Initialize(string name, string title, ConfigEntry<Vector2> offset)
     {
         var source = InventoryGui.instance.m_container;
@@ -35,9 +36,10 @@ internal sealed class PreviewTradeWindow : TradeWindow
         Hide();
     }
     public void SetTitle(string title) { if (_title != null) _title.text = title; }
-    public void Display(Inventory inventory, string title)
+    public void Display(Inventory inventory, string title, Inventory? reservations = null)
     {
         Inventory = inventory;
+        _reservations = reservations;
         if (_title != null) _title.text = title;
         // Extra rows scroll within the existing container.
         Panel.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
@@ -52,8 +54,8 @@ internal sealed class PreviewTradeWindow : TradeWindow
         if (Visible) Refresh();
     }
     public override void Show() { base.Show(); if (_clone != null) _clone.SetActive(true); }
-    public override void Hide() { base.Hide(); if (_clone != null) _clone.SetActive(false); }
-    public override void Reset() { Inventory.RemoveAll(); base.Reset(); Refresh(); }
+    public override void Hide() { _reservations = null; base.Hide(); if (_clone != null) _clone.SetActive(false); }
+    public override void Reset() { _reservations = null; Inventory.RemoveAll(); base.Reset(); Refresh(); }
     public override void Refresh()
     {
         base.Refresh();
@@ -63,6 +65,7 @@ internal sealed class PreviewTradeWindow : TradeWindow
             element.m_equiped.enabled = item != null && item.m_equipped;
             element.m_equiped.color = new Color(0.35f, 0.65f, 0.59f, 0.65f);
         }
+        if (_reservations != null) ReservedInventoryRenderer.Draw(Grid, Inventory, _reservations);
         if (_weight != null) _weight.text = Mathf.CeilToInt(Inventory.GetTotalWeight()).ToString();
     }
     private void OnDestroy() { if (_clone != null) Destroy(_clone); }

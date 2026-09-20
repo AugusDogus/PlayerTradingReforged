@@ -97,6 +97,11 @@ namespace PlayerTradingReforged.GUI
         public static TradeWindowManager Instance { get; set; } = new();
         public Inventory Give = new(), Receive = new();
         public Inventory? PartnerInventory;
+        public Inventory Reservations = new();
+        public Inventory? PartnerReservations;
+        public Inventory GetReservedInventory() => Reservations;
+        public void ShowPartnerPreview(TradePreviewSnapshot? preview)
+        { PartnerInventory = preview?.Available; PartnerReservations = preview?.Reserved; }
         public float? PartnerCapacity;
         public TradeWeightSnapshot? PartnerWeights;
         public void SetPartnerWeights(TradeWeightSnapshot? weights) => PartnerWeights = weights;
@@ -125,10 +130,25 @@ namespace PlayerTradingReforged.Trading
 {
     internal static class TradeInventory
     {
+        public const int MaxPackageBytes = 256 * 1024;
         public static Inventory Create() => new();
         public static string Save(Inventory inventory) => JsonSerializer.Serialize(inventory.Items);
-        public static string SavePreview(Inventory inventory) => Save(inventory);
-        public static bool TryLoadPreview(string value, out Inventory inventory) => TryLoad(value, out inventory);
+        private static readonly JsonSerializerOptions PreviewOptions = new() { IncludeFields = true };
+        public static string SavePreview(Inventory inventory) => inventory.GridItems.Count == 0 ? Save(inventory)
+            : "#" + JsonSerializer.Serialize(inventory.GridItems, PreviewOptions);
+        public static bool TryLoadPreview(string value, out Inventory inventory)
+        {
+            if (!value.StartsWith("#")) return TryLoad(value, out inventory);
+            inventory = new Inventory();
+            try
+            {
+                var items = JsonSerializer.Deserialize<List<ItemDrop.ItemData>>(value.Substring(1), PreviewOptions);
+                if (items == null) return false;
+                inventory.GridItems.AddRange(items);
+                return true;
+            }
+            catch (JsonException) { return false; }
+        }
         public static bool TryLoad(string value, out Inventory inventory)
         {
             inventory = new Inventory();

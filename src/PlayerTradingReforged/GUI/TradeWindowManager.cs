@@ -58,6 +58,13 @@ internal sealed class TradeWindowManager : MonoSingleton<TradeWindowManager>
     public Inventory GetToTradeInventory() => UI.Give.Inventory;
     public Inventory GetToReceiveInventory() => UI.Receive.Inventory;
     public void RefreshToReceiveWindow() => UI.Receive.Refresh();
+    public Inventory GetReservedInventory() => OfferedView?.CreateReservations() ??
+        new Inventory("Reservations", null, Player.m_localPlayer.GetInventory().GetWidth(), Player.m_localPlayer.GetInventory().GetHeight());
+    public void ShowPartnerPreview(TradePreviewSnapshot? snapshot)
+    {
+        UI.Partner.Display(snapshot?.Available ?? TradeInventory.Create(),
+            snapshot != null ? PartnerTitle : Plugin.Localization.PartnerInventoryUnavailable, snapshot?.Reserved);
+    }
     public void ShowPartnerInventory(Inventory? inventory)
     {
         UI.Partner.Display(inventory ?? TradeInventory.Create(),

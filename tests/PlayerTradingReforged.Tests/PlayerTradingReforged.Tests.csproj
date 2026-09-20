@@ -8,6 +8,8 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" PrivateAssets="all" />
+    <Compile Include="../../src/PlayerTradingReforged/Trading/TradePreviewSnapshot.cs" Link="TradePreviewSnapshot.cs" />
+    <Compile Include="../../src/PlayerTradingReforged/GUI/ReservedInventoryRenderer.cs" Link="ReservedInventoryRenderer.cs" />
     <Compile Include="../../src/PlayerTradingReforged/GUI/OfferedInventoryView.cs" Link="OfferedInventoryView.cs" />
     <Compile Include="../../src/PlayerTradingReforged/Trading/ReservationLedger.cs" Link="ReservationLedger.cs" />
     <Compile Include="../../src/PlayerTradingReforged/Trading/TradeWeightSnapshot.cs" Link="TradeWeightSnapshot.cs" />

@@ -12,18 +12,25 @@ public sealed class ItemDrop
     public sealed class ItemData
     {
         public int m_stack, m_quality;
+        public bool m_equipped;
+        public bool IsSameType(ItemData other) => m_shared.m_name == other.m_shared.m_name && m_quality == other.m_quality;
         public Vector2i m_gridPos;
         public SharedData m_shared = new();
         public ItemData Clone() => (ItemData)MemberwiseClone();
         public object GetIcon() => this;
-        public sealed class SharedData { public int m_maxStackSize = 50, m_maxQuality = 1; }
+        public sealed class SharedData { public string m_name = "wood"; public bool m_questItem; public int m_maxStackSize = 50, m_maxQuality = 1; }
     }
 }
 public sealed partial class Inventory
 {
     public readonly List<ItemDrop.ItemData> GridItems = new();
-    public int GetWidth() => 8;
-    public int GetHeight() => 4;
+    private int _width = 8, _height = 4;
+    public Inventory() { }
+    public Inventory(string name, object? background, int width, int height) { _width = width; _height = height; }
+    public List<ItemDrop.ItemData> m_inventory => GridItems;
+    public void Changed() => m_onChanged?.Invoke();
+    public int GetWidth() => _width;
+    public int GetHeight() => _height;
     public List<ItemDrop.ItemData> GetAllItems() => GridItems;
     public ItemDrop.ItemData? GetItemAt(int x, int y) => GridItems.FirstOrDefault(item => item.m_gridPos.x == x && item.m_gridPos.y == y);
 }
@@ -45,5 +52,5 @@ public sealed class InventoryGrid
 }
 namespace UnityEngine
 {
-    public struct Color { public static Color grey => new(); }
+    public struct Color { public float Value; public static Color grey => new() { Value = 0.5f }; }
 }

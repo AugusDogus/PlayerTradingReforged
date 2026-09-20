@@ -49,6 +49,26 @@ public sealed class TradeRecoveryTests
     }
 
     [Fact]
+    public void SharedReservationsDoNotChangeOffersAndLegacyMessagesCannotEraseThem()
+    {
+        var (a, b) = Pair();
+        a.UI.Reservations.GridItems.Add(new ItemDrop.ItemData { m_stack = 4, m_gridPos = new Vector2i(3, 2) });
+        a.Trade.Tick();
+        var message = Assert.Single(a.Handler.Messages, m => m.Kind == "inventory-reservations");
+        b.Trade.Receive(message.Kind, message.Local, message.Remote, message.Items);
+        Assert.Equal(4, Assert.Single(Assert.IsType<Inventory>(b.UI.PartnerReservations).GetAllItems()).m_stack);
+        b.Trade.Receive("inventory", 0, 0, "[]");
+        Assert.Single(Assert.IsType<Inventory>(b.UI.PartnerReservations).GetAllItems());
+        Assert.Empty(b.UI.Give.Items); Assert.Empty(b.UI.Receive.Items);
+        Assert.Equal(0, b.Trade.Session.RemoteRevision);
+        a.Handler.Messages.Clear(); a.UI.Reservations.GridItems.Clear();
+        Time.unscaledTime = 0.5f; a.Trade.Tick();
+        message = Assert.Single(a.Handler.Messages, m => m.Kind == "inventory-reservations");
+        b.Trade.Receive(message.Kind, message.Local, message.Remote, message.Items);
+        Assert.Empty(Assert.IsType<Inventory>(b.UI.PartnerReservations).GetAllItems());
+    }
+
+    [Fact]
     public void PartnerCurrentWeightDoesNotMixOfferAndInventoryMessageTiming()
     {
         var (a, b) = Pair();

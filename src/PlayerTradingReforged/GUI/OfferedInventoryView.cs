@@ -74,41 +74,22 @@ internal sealed class OfferedInventoryView
         }
         return new Vector2i(-1, -1);
     }
-    public void Draw(InventoryGrid grid)
+    public Inventory CreateReservations()
     {
         Reconcile();
+        var inventory = new Inventory("Reservations", null, _player.GetWidth(), _player.GetHeight());
         foreach (int slot in _ledger.Slots)
         {
             if (!_templates.TryGetValue(slot, out var template)) continue;
-            var position = Position(slot);
-            var element = grid.GetElement(position.x, position.y, _player.GetWidth());
-            if (element == null) continue;
-            int reserved = _ledger.CountAt(slot);
-            var available = _player.GetItemAt(position.x, position.y);
-            if (available == null)
-            {
-                element.m_icon.enabled = true;
-                element.m_icon.sprite = template.GetIcon();
-                element.m_icon.color = Color.grey; // Same tint as vanilla's dragged item.
-                element.m_quality.enabled = template.m_shared.m_maxQuality > 1;
-                element.m_quality.text = template.m_quality.ToString();
-                element.m_amount.enabled = template.m_shared.m_maxStackSize > 1;
-                element.m_amount.text = reserved + "/" + template.m_shared.m_maxStackSize;
-                if (grid.GetHoveredElement() == element)
-                {
-                    template.m_stack = reserved;
-                    grid.CreateItemTooltip(template, element.m_tooltip);
-                }
-            }
-            else
-            {
-                // Keep the normal usable-count/stack-limit format; the tooltip explains the reservation.
-                element.m_amount.enabled = true;
-                element.m_amount.text = available.m_stack + "/" + available.m_shared.m_maxStackSize;
-            }
-            if (grid.GetHoveredElement() == element)
-                element.m_tooltip.m_text += "\n" + string.Format(Plugin.Localization.ReservedForTradeText, reserved);
+            var item = template.Clone();
+            item.m_stack = _ledger.CountAt(slot);
+            item.m_gridPos = Position(slot);
+            item.m_equipped = false;
+            inventory.m_inventory.Add(item);
         }
+        inventory.Changed();
+        return inventory;
     }
+    public void Draw(InventoryGrid grid) => ReservedInventoryRenderer.Draw(grid, _player, CreateReservations());
     public void Clear() { _ledger.Clear(); _templates.Clear(); _last.Clear(); _returning = null; }
 }
