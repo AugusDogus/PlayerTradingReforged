@@ -1,6 +1,6 @@
 {
   "name": "PlayerTradingReforged",
-  "version_number": "1.2.0",
+  "version_number": "1.2.1",
   "website_url": "https://github.com/AugusDogus/PlayerTradingReforged",
   "description": "Trade items directly with other players using familiar inventory windows. Both traders install the mod; no server installation required.",
   "dependencies": [

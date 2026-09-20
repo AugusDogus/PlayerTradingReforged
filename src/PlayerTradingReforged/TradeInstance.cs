@@ -19,6 +19,7 @@ internal sealed class TradeInstance
     private float _nextInventoryPreview;
     private string? _lastInventoryPreview;
     private float? _lastCarryCapacity;
+    private string? _lastWeights;
     public TradeSession Session { get; }
     public Inventory Give { get; }
     private Inventory ReceiveItems { get; }
@@ -89,6 +90,9 @@ internal sealed class TradeInstance
         switch (kind)
         {
             case "heartbeat": break;
+            case "weights":
+                _windows.SetPartnerWeights(TradeWeightSnapshot.Parse(items));
+                break;
             case "capacity":
                 _windows.SetPartnerCapacity(float.TryParse(items, NumberStyles.Float, CultureInfo.InvariantCulture, out float capacity)
                     && !float.IsNaN(capacity) && !float.IsInfinity(capacity) && capacity >= 0 ? capacity : null);
@@ -167,6 +171,12 @@ internal sealed class TradeInstance
             {
                 _handler.Send(Session, "capacity", capacity.ToString("R", CultureInfo.InvariantCulture));
                 _lastCarryCapacity = capacity;
+            }
+            string weights = TradeWeightSnapshot.Encode(_local.GetInventory().GetTotalWeight(), Give.GetTotalWeight(), capacity);
+            if (weights != _lastWeights)
+            {
+                _handler.Send(Session, "weights", weights);
+                _lastWeights = weights;
             }
             string preview = TradeInventory.SavePreview(_local.GetInventory());
             if (preview != _lastInventoryPreview)

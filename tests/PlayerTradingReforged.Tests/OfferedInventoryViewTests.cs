@@ -5,6 +5,25 @@ public sealed class OfferedInventoryViewTests
 {
     private static ItemDrop.ItemData Item(int slot, int count) => new() { m_gridPos = new Vector2i(slot % 8, slot / 8), m_stack = count };
 
+    [Theory]
+    [InlineData(4, "4/30")]
+    [InlineData(2, "2/30")]
+    public void ReservedStacksKeepTheNormalCountAndLimitFormat(int offered, string expected)
+    {
+        var player = new Inventory(); var offer = new Inventory(); var item = Item(0, 4);
+        item.m_shared.m_maxStackSize = 30;
+        player.GridItems.Add(item);
+        var view = new OfferedInventoryView(player, offer);
+        var transfer = Assert.IsType<OfferedInventoryView.Transfer>(view.Begin(offer, player, item));
+        var reserved = item.Clone(); reserved.m_stack = offered; offer.GridItems.Add(reserved);
+        item.m_stack -= offered;
+        if (item.m_stack == 0) player.GridItems.Remove(item);
+        view.End(transfer);
+        var element = new InventoryGrid.Element();
+        view.Draw(new InventoryGrid { VisibleElement = element });
+        Assert.Equal(expected, element.m_amount.text);
+    }
+
     [Fact]
     public void OfferedSlotStaysReservedWithoutPuttingADuplicateInTheOwnedInventory()
     {

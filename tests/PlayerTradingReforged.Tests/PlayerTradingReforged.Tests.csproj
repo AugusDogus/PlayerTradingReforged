@@ -10,6 +10,7 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" PrivateAssets="all" />
     <Compile Include="../../src/PlayerTradingReforged/GUI/OfferedInventoryView.cs" Link="OfferedInventoryView.cs" />
     <Compile Include="../../src/PlayerTradingReforged/Trading/ReservationLedger.cs" Link="ReservationLedger.cs" />
+    <Compile Include="../../src/PlayerTradingReforged/Trading/TradeWeightSnapshot.cs" Link="TradeWeightSnapshot.cs" />
     <Compile Include="../../src/PlayerTradingReforged/TradeInstance.cs" Link="TradeInstance.cs" />
     <Compile Include="../../src/PlayerTradingReforged/Trading/TradeRecovery.cs" Link="TradeRecovery.cs" />
     <Compile Include="../../src/PlayerTradingReforged/Trading/TradeCapacity.cs" Link="TradeCapacity.cs" />

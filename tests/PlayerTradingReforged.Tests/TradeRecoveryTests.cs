@@ -49,6 +49,27 @@ public sealed class TradeRecoveryTests
     }
 
     [Fact]
+    public void PartnerCurrentWeightDoesNotMixOfferAndInventoryMessageTiming()
+    {
+        var (a, b) = Pair();
+        a.Player.Inventory.Weight = 97;
+        a.Trade.Tick();
+        var first = Assert.Single(a.Handler.Messages, m => m.Kind == "weights");
+        b.Trade.Receive(first.Kind, first.Local, first.Remote, first.Items);
+        Assert.Equal(97, Assert.IsType<TradeWeightSnapshot>(b.UI.PartnerWeights).Current);
+        a.Handler.Messages.Clear();
+        a.UI.Give.Add("wood");
+        a.UI.Give.Weight = 12; a.Player.Inventory.Weight = 85;
+        SendOne(a, b); // Offer arrives before the next inventory/weight sample.
+        Assert.Equal(97, Assert.IsType<TradeWeightSnapshot>(b.UI.PartnerWeights).Current);
+        Time.unscaledTime = 0.5f; a.Trade.Tick();
+        var updated = Assert.Single(a.Handler.Messages, m => m.Kind == "weights");
+        b.Trade.Receive(updated.Kind, updated.Local, updated.Remote, updated.Items);
+        Assert.Equal(97, Assert.IsType<TradeWeightSnapshot>(b.UI.PartnerWeights).Current);
+        Assert.Equal(85, Assert.IsType<TradeWeightSnapshot>(b.UI.PartnerWeights).InBag);
+    }
+
+    [Fact]
     public void TradeUsesTheOtherCharactersName()
     {
         var (a, b) = Pair();

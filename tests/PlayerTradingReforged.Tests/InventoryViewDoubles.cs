@@ -38,7 +38,8 @@ public sealed class InventoryGrid
         public readonly Label m_quality = new(), m_amount = new();
         public readonly Tooltip m_tooltip = new();
     }
-    public Element? GetElement(int x, int y, int width) => null;
+    public Element? VisibleElement;
+    public Element? GetElement(int x, int y, int width) => VisibleElement;
     public Element? GetHoveredElement() => null;
     public void CreateItemTooltip(ItemDrop.ItemData item, Tooltip tooltip) { }
 }

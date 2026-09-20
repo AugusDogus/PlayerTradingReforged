@@ -10,6 +10,8 @@ public sealed partial class Inventory
     public int Capacity = 24;
     public readonly List<string> Items = new();
     public Action? m_onChanged;
+    public float Weight;
+    public float GetTotalWeight() => Weight;
     public int NrOfItems() => Items.Count;
     public void RemoveAll() { Items.Clear(); m_onChanged?.Invoke(); }
     public void Add(string item) { Items.Add(item); m_onChanged?.Invoke(); }
@@ -96,6 +98,8 @@ namespace PlayerTradingReforged.GUI
         public Inventory Give = new(), Receive = new();
         public Inventory? PartnerInventory;
         public float? PartnerCapacity;
+        public TradeWeightSnapshot? PartnerWeights;
+        public void SetPartnerWeights(TradeWeightSnapshot? weights) => PartnerWeights = weights;
         public string? PartnerName;
         public void SetPartnerCapacity(float? capacity) => PartnerCapacity = capacity;
         public void SetPartnerName(string name) => PartnerName = name;

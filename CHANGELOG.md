@@ -1,4 +1,10 @@
-# 1.2.0 (unreleased)
+# 1.2.1 (unreleased)
+
+- Put Your Inventory inside the same framed header as the partner inventory.
+- Send current, in-bag, and maximum weights together from the owner, preventing brief double counting when offer and inventory updates arrive separately.
+- Restore count/stack-limit labels on reserved and partially offered stacks, with reservation details in tooltips.
+
+# 1.2.0
 
 - Add a Your Inventory heading and muted teal highlights for the partner’s equipped items.
 - Hide the armor badge during trading and place Cancel on the left, Accept on the right.

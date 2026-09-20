@@ -93,7 +93,7 @@ internal sealed class OfferedInventoryView
                 element.m_quality.enabled = template.m_shared.m_maxQuality > 1;
                 element.m_quality.text = template.m_quality.ToString();
                 element.m_amount.enabled = template.m_shared.m_maxStackSize > 1;
-                element.m_amount.text = reserved.ToString();
+                element.m_amount.text = reserved + "/" + template.m_shared.m_maxStackSize;
                 if (grid.GetHoveredElement() == element)
                 {
                     template.m_stack = reserved;
@@ -102,9 +102,9 @@ internal sealed class OfferedInventoryView
             }
             else
             {
-                // Unoffered portions remain usable; the grey count is the reserved portion.
+                // Keep the normal usable-count/stack-limit format; the tooltip explains the reservation.
                 element.m_amount.enabled = true;
-                element.m_amount.text = available.m_stack + "<color=#999999>+" + reserved + "</color>";
+                element.m_amount.text = available.m_stack + "/" + available.m_shared.m_maxStackSize;
             }
             if (grid.GetHoveredElement() == element)
                 element.m_tooltip.m_text += "\n" + string.Format(Plugin.Localization.ReservedForTradeText, reserved);
