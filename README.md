@@ -16,6 +16,14 @@ Install through **r2modman** or **Thunderstore Mod Manager**. Requires **BepInEx
 
 ## Credits & development
 
-An independent rewrite of [projjm’s Player Trading](https://github.com/projjm/Valheim-Player-Trading), with fresh settings.
+A rewrite of [projjm’s Player Trading](https://github.com/projjm/Valheim-Player-Trading), with fresh settings.
 
 [Build instructions](docs/DEVELOPMENT.md) · [Test checklist](docs/TESTING.md) · [Changelog](CHANGELOG.md)
+
+## License
+
+Original AugusDogus contributions are licensed under [MIT](LICENSE.md).
+This grant excludes inherited upstream material and historical upstream commits;
+the original Player Trading repository supplies no license grant.
+See [third-party notices](package/THIRD-PARTY-NOTICES.md). The project is not
+represented as wholly MIT-licensed while those permissions remain unresolved.

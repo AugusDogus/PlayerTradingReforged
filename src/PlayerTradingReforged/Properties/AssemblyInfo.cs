@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Player Trading Reforged")]
-[assembly: AssemblyCopyright("Copyright ©  2021")]
+[assembly: AssemblyCopyright("Copyright ©  2021; Copyright (c) 2026 AugusDogus (original contributions)")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
